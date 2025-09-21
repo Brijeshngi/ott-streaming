@@ -1,0 +1,4 @@
+node_modules/*
+text.text
+.env
+jest.config.js
