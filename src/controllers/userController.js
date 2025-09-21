@@ -10,6 +10,7 @@ import ErrorHandle from "../utils/errorHandle.js";
 import { catchAsyncError } from "../utils/catchAsyncError.js";
 import { sendToken } from "../utils/sendToken.js";
 import { Review } from "../models/Review.js";
+import { generateTokens, saveRefreshToken, blacklistToken, isBlacklisted } from "../utils/tokenUtils.js";
 
 import crypto from "crypto";
 
@@ -41,7 +42,8 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
     userAgent: req.headers["user-agent"],
   });
 
-  sendToken(res, user, 201, "Registered successfully");
+  res.status(201).json({success:true,
+  message:"Registered successfully"})
 });
 
 //
@@ -63,7 +65,9 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandle("Invalid email or password", 401));
   }
 
-  const token = user.getJWTToken();
+   // Generate tokens
+  const { accessToken, refreshToken } = generateTokens(user);
+  await saveRefreshToken(user, refreshToken);
 
   // Attach device entry
   let device = await Device.findOne({ deviceId, userId: user._id });
@@ -79,12 +83,12 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
       deviceType: deviceType || "web",
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
-      activeToken: token,
+      activeToken: refreshToken,
     });
 
     user.devices.push(device._id);
   } else {
-    device.activeToken = token;
+    device.activeToken = refreshToken;
     device.lastActiveAt = new Date();
     await device.save();
   }
@@ -102,45 +106,89 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
     ipAddress: req.ip,
     userAgent: req.headers["user-agent"],
   });
-
-  sendToken(res, user, 200, "Logged in successfully");
+ res
+    .status(200)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    })
+    .json({ success: true, accessToken });
 });
+
+// ====================== REFRESH ACCESS TOKEN ======================
+export const refreshAccessToken = catchAsyncError(async (req, res, next) => {
+  const token = req.cookies.refreshToken || req.body.refreshToken;
+  if (!token) return next(new ErrorHandle("Refresh token required", 401));
+
+  // Check blacklist
+  const blacklisted = await isBlacklisted(token);
+  if (blacklisted) return next(new ErrorHandle("Token blacklisted", 403));
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return next(new ErrorHandle("User not found", 404));
+
+    // Check if refresh token exists in user's devices
+    const valid = user.devices.some((d) => d.refreshToken === token);
+    if (!valid) return next(new ErrorHandle("Invalid refresh token", 403));
+
+    // Issue new access token
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.Role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.status(200).json({ success: true, accessToken });
+  } catch (err) {
+    return next(new ErrorHandle("Invalid or expired refresh token", 401));
+  }
+});
+
 
 //
 // 🔹 Logout one device
 //
 export const logoutDevice = catchAsyncError(async (req, res, next) => {
-  const { deviceId } = req.body;
-  await Device.deleteOne({ userId: req.user._id, deviceId });
+  const token = req.cookies.refreshToken || req.body.refreshToken;
+  if (token) {
+    try {
+      const decoded = jwt.decode(token);
+      const exp = decoded.exp - Math.floor(Date.now() / 1000);
+      await blacklistToken(token, exp);
+    } catch (err) {
+      console.log("Error decoding refresh token:", err.message);
+    }
 
-  await User.findByIdAndUpdate(req.user._id, { $pull: { devices: deviceId } });
+    // Remove token from user.devices
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.devices = user.devices.filter((d) => d.refreshToken !== token);
+      await user.save();
+    }
+  }
 
-  await AuditLog.create({
-    userId: req.user._id,
-    action: "logout",
-    ipAddress: req.ip,
-    userAgent: req.headers["user-agent"],
-  });
-
-  res.status(200).json({ success: true, message: "Logged out from device" });
+  res
+    .clearCookie("refreshToken")
+    .status(200)
+    .json({ success: true, message: "Logged out successfully" });
 });
 
 //
 // 🔹 Logout all devices
 //
 export const logoutAll = catchAsyncError(async (req, res, next) => {
-  await Device.deleteMany({ userId: req.user._id });
-
-  await User.findByIdAndUpdate(req.user._id, { devices: [] });
-
-  await AuditLog.create({
-    userId: req.user._id,
-    action: "logout_all",
-    ipAddress: req.ip,
-    userAgent: req.headers["user-agent"],
-  });
+  const user = await User.findById(req.user._id);
+  if (user) {
+    user.devices = [];
+    user.RefreshTokens = [];
+    await user.save();
+  }
 
   res
+    .clearCookie("refreshToken")
     .status(200)
     .json({ success: true, message: "Logged out from all devices" });
 });

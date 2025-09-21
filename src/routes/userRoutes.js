@@ -45,6 +45,7 @@ const router = express.Router();
 // 🔹 Auth
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/refresh", isAuthenticated,refreshAccessToken);
 router.post("/logout-device", isAuthenticated, logoutDevice);
 router.post("/logout-all", isAuthenticated, logoutAll);
 
