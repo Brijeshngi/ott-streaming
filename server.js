@@ -45,9 +45,7 @@ io.on("connection", (socket) => {
 export { io, onlineUsers };
 
 const PORT = process.env.PORT || 5000;
-
+// sudo service redis-server start
 app.listen(PORT, () => {
-  logger.info(
-    `🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
-  );
+  logger.info(`🚀 Server running on port ${PORT}`);
 });

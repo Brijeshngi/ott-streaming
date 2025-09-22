@@ -8,9 +8,13 @@ import { Subscription } from "../models/Subscription.js";
 import { Content } from "../models/Content.js";
 import ErrorHandle from "../utils/errorHandle.js";
 import { catchAsyncError } from "../utils/catchAsyncError.js";
-import { sendToken } from "../utils/sendToken.js";
-import { Review } from "../models/Review.js";
-import { generateTokens, saveRefreshToken, blacklistToken, isBlacklisted } from "../utils/tokenUtils.js";
+import { Review } from "../models/Reviews.js";
+import {
+  generateTokens,
+  saveRefreshToken,
+  blacklistToken,
+  isBlacklisted,
+} from "../utils/tokenUtils.js";
 
 import crypto from "crypto";
 
@@ -42,8 +46,7 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
     userAgent: req.headers["user-agent"],
   });
 
-  res.status(201).json({success:true,
-  message:"Registered successfully"})
+  res.status(201).json({ success: true, message: "Registered successfully" });
 });
 
 //
@@ -65,7 +68,7 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandle("Invalid email or password", 401));
   }
 
-   // Generate tokens
+  // Generate tokens
   const { accessToken, refreshToken } = generateTokens(user);
   await saveRefreshToken(user, refreshToken);
 
@@ -106,7 +109,7 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
     ipAddress: req.ip,
     userAgent: req.headers["user-agent"],
   });
- res
+  res
     .status(200)
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -146,7 +149,6 @@ export const refreshAccessToken = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandle("Invalid or expired refresh token", 401));
   }
 });
-
 
 //
 // 🔹 Logout one device
@@ -792,8 +794,8 @@ export const generateNotifications = catchAsyncError(
     // Collect preferred genres from Likes + Watchlist
     let preferredGenres = [];
     if (user.Likes) preferredGenres.push(...user.Likes.map((c) => c.genre));
-    if (user.Watchlist)
-      preferredGenres.push(...user.Watchlist.map((c) => c.genre));
+    if (user.watchlist)
+      preferredGenres.push(...user.watchlist.map((c) => c.genre));
 
     preferredGenres = [...new Set(preferredGenres)];
 
@@ -866,3 +868,91 @@ export const markNotificationRead = catchAsyncError(
     });
   }
 );
+
+// ====================== LIKES & DISLIKES ======================
+
+// Like content
+export const likeContent = catchAsyncError(async (req, res, next) => {
+  const { contentId } = req.body;
+  if (!contentId) return next(new ErrorHandle("Content ID required", 400));
+
+  const user = await User.findById(req.user._id);
+  if (!user) return next(new ErrorHandle("User not found", 404));
+
+  user.Likes = user.Likes || [];
+  user.Dislikes = user.Dislikes || [];
+
+  // Remove from dislikes if already there
+  user.Dislikes = user.Dislikes.filter(
+    (id) => String(id) !== String(contentId)
+  );
+
+  // Add to likes if not already there
+  if (!user.Likes.includes(contentId)) {
+    user.Likes.push(contentId);
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Content liked",
+    likes: user.Likes,
+  });
+});
+
+// Dislike content
+export const dislikeContent = catchAsyncError(async (req, res, next) => {
+  const { contentId } = req.body;
+  if (!contentId) return next(new ErrorHandle("Content ID required", 400));
+
+  const user = await User.findById(req.user._id);
+  if (!user) return next(new ErrorHandle("User not found", 404));
+
+  user.Likes = user.Likes || [];
+  user.Dislikes = user.Dislikes || [];
+
+  // Remove from likes if already there
+  user.Likes = user.Likes.filter((id) => String(id) !== String(contentId));
+
+  // Add to dislikes if not already there
+  if (!user.Dislikes.includes(contentId)) {
+    user.Dislikes.push(contentId);
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Content disliked",
+    dislikes: user.Dislikes,
+  });
+});
+
+// Get all liked content
+export const getLikedContent = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.user._id).populate(
+    "Likes",
+    "contentTitle genre thumbnail"
+  );
+  if (!user) return next(new ErrorHandle("User not found", 404));
+
+  res.status(200).json({
+    success: true,
+    likedContent: user.Likes || [],
+  });
+});
+
+// Get all disliked content
+export const getDislikedContent = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.user._id).populate(
+    "Dislikes",
+    "contentTitle genre thumbnail"
+  );
+  if (!user) return next(new ErrorHandle("User not found", 404));
+
+  res.status(200).json({
+    success: true,
+    dislikedContent: user.Dislikes || [],
+  });
+});

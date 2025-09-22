@@ -15,8 +15,17 @@ import offerRoutes from "./routes/offerRoutes.js";
 import adRoutes from "./routes/adRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import watchRoutes from "./routes/watchRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 const app = express();
+
+// swaggerUi
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+
+const swaggerDocument = JSON.parse(fs.readFileSync("./swagger.json", "utf8"));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //
 app.use("/api/", apiLimiter); // applies to all APIs
@@ -52,6 +61,8 @@ app.use("/api/v1/offers", offerRoutes);
 app.use("/api/v1/ads", adRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
+app.use("/api/v1/watch", watchRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 //
 // 🔹 Error Handler (last middleware)

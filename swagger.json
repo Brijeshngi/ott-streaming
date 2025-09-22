@@ -1,0 +1,748 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CineStream OTT Platform API",
+    "version": "1.0.0",
+    "description": "Swagger API documentation for CineStream Node.js backend"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "FirstName": {
+                    "type": "string"
+                  },
+                  "LastName": {
+                    "type": "string"
+                  },
+                  "Email": {
+                    "type": "string"
+                  },
+                  "Contact": {
+                    "type": "string"
+                  },
+                  "Password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Email",
+                  "Password",
+                  "Contact"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Email": {
+                    "type": "string"
+                  },
+                  "Password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Email",
+                  "Password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Refresh access token",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns new access token"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout from current device",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully"
+          }
+        }
+      }
+    },
+    "/auth/logout/all": {
+      "post": {
+        "summary": "Logout from all devices",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out from all devices"
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "summary": "Get logged-in user profile",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile returned"
+          }
+        }
+      }
+    },
+    "/user/all": {
+      "get": {
+        "summary": "Get all users (Admin only)",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All users list returned"
+          }
+        }
+      }
+    },
+    "/user/change-password": {
+      "put": {
+        "summary": "Change password",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully"
+          }
+        }
+      }
+    },
+    "/user/forgot-password": {
+      "post": {
+        "summary": "Request password reset",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset link sent"
+          }
+        }
+      }
+    },
+    "/user/reset-password/{token}": {
+      "put": {
+        "summary": "Reset password",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful"
+          }
+        }
+      }
+    },
+    "/user/subscription/upgrade": {
+      "put": {
+        "summary": "Upgrade subscription plan",
+        "tags": [
+          "Subscription"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription upgraded"
+          }
+        }
+      }
+    },
+    "/user/subscription/cancel": {
+      "post": {
+        "summary": "Cancel subscription",
+        "tags": [
+          "Subscription"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription cancelled"
+          }
+        }
+      }
+    },
+    "/user/content/subscription-plan": {
+      "get": {
+        "summary": "Get content by subscription plan",
+        "tags": [
+          "Subscription"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns content list"
+          }
+        }
+      }
+    },
+    "/user/watchlist": {
+      "get": {
+        "summary": "Get watchlist",
+        "tags": [
+          "Watchlist"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns watchlist"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add to watchlist",
+        "tags": [
+          "Watchlist"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contentId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "contentId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Added to watchlist"
+          }
+        }
+      }
+    },
+    "/user/watchlist/{contentId}": {
+      "delete": {
+        "summary": "Remove from watchlist",
+        "tags": [
+          "Watchlist"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed from watchlist"
+          }
+        }
+      }
+    },
+    "/user/like": {
+      "post": {
+        "summary": "Like content",
+        "tags": [
+          "Likes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content liked"
+          }
+        }
+      }
+    },
+    "/user/dislike": {
+      "post": {
+        "summary": "Dislike content",
+        "tags": [
+          "Dislikes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contentId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content disliked"
+          }
+        }
+      }
+    },
+    "/user/likes": {
+      "get": {
+        "summary": "Get liked content",
+        "tags": [
+          "Likes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns liked content"
+          }
+        }
+      }
+    },
+    "/user/dislikes": {
+      "get": {
+        "summary": "Get disliked content",
+        "tags": [
+          "Dislikes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns disliked content"
+          }
+        }
+      }
+    },
+    "/reviews": {
+      "post": {
+        "summary": "Add or update review",
+        "tags": [
+          "Reviews"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review added or updated"
+          }
+        }
+      }
+    },
+    "/reviews/{contentId}": {
+      "get": {
+        "summary": "Get reviews for content",
+        "tags": [
+          "Reviews"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews"
+          }
+        }
+      }
+    },
+    "/reviews/{reviewId}": {
+      "delete": {
+        "summary": "Delete a review",
+        "tags": [
+          "Reviews"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reviewId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted"
+          }
+        }
+      }
+    },
+    "/reviews/{contentId}/average": {
+      "get": {
+        "summary": "Get average rating for content",
+        "tags": [
+          "Reviews"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Average rating returned"
+          }
+        }
+      }
+    },
+    "/user/recommendations": {
+      "get": {
+        "summary": "Get personalized recommendations",
+        "tags": [
+          "Recommendations"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recommendations returned"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "Get user notifications",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications"
+          }
+        }
+      }
+    },
+    "/notifications/generate": {
+      "post": {
+        "summary": "Generate notifications manually",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications generated"
+          }
+        }
+      }
+    },
+    "/notifications/{notificationId}/read": {
+      "put": {
+        "summary": "Mark notification as read",
+        "tags": [
+          "Notifications"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read"
+          }
+        }
+      }
+    },
+    "/watch/start": {
+      "post": {
+        "summary": "Start watching content",
+        "tags": [
+          "Active Viewers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User added to active viewers pool"
+          }
+        }
+      }
+    },
+    "/watch/stop": {
+      "post": {
+        "summary": "Stop watching content",
+        "tags": [
+          "Active Viewers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User removed from active viewers pool"
+          }
+        }
+      }
+    },
+    "/watch/{contentId}/viewers": {
+      "get": {
+        "summary": "Get active viewers count",
+        "tags": [
+          "Active Viewers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active viewers count returned"
+          }
+        }
+      }
+    }
+  }
+}

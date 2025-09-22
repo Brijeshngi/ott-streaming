@@ -18,11 +18,10 @@ import {
   upgradeSubscription,
   cancelSubscription,
   getContentOnsubsriptionPlan,
-  getUserDashboard,
-  likeContent,
-  dislikeContent,
-  getLikedContent,
-  getDislikedContent,
+  // likeContent,
+  // dislikeContent,
+  // getLikedContent,
+  // getDislikedContent,
   addOrUpdateReview,
   getReviewsForContent,
   deleteReview,
@@ -31,12 +30,13 @@ import {
   generateNotifications,
   getNotifications,
   markNotificationRead,
+  refreshAccessToken,
 } from "../controllers/userController.js";
 import {
   startWatching,
   stopWatching,
   getActiveViewers,
-} from "../controllers/watchController.js";
+} from "../controllers/watchControllers.js";
 
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -45,7 +45,7 @@ const router = express.Router();
 // 🔹 Auth
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/refresh", isAuthenticated,refreshAccessToken);
+router.post("/refresh", isAuthenticated, refreshAccessToken);
 router.post("/logout-device", isAuthenticated, logoutDevice);
 router.post("/logout-all", isAuthenticated, logoutAll);
 
@@ -78,10 +78,10 @@ router.get(
 );
 
 // Likes / Dislikes routes
-router.post("/likes", isAuthenticated, likeContent);
-router.post("/dislikes", isAuthenticated, dislikeContent);
-router.get("/likes", isAuthenticated, getLikedContent);
-router.get("/dislikes", isAuthenticated, getDislikedContent);
+// router.post("/likes", isAuthenticated, likeContent);
+// router.post("/dislikes", isAuthenticated, dislikeContent);
+// router.get("/likes", isAuthenticated, getLikedContent);
+// router.get("/dislikes", isAuthenticated, getDislikedContent);
 
 // Reviews & Ratings
 router.post("/reviews", isAuthenticated, addOrUpdateReview);

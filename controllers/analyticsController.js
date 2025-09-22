@@ -6,7 +6,6 @@ import { Content } from "../models/Content.js";
 import { Device } from "../models/Device.js";
 import { Transaction } from "../models/Transaction.js";
 import { Subscription } from "../models/Subscription.js";
-import { User } from "../models/User.js";
 // 🔹 Ad Performance Analytics
 export const getAdAnalytics = catchAsyncError(async (req, res, next) => {
   const pipeline = [

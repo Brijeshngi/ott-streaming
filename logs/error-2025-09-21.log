@@ -1,0 +1,68 @@
+2025-09-21 20:56:10 [ERROR]: ReferenceError: refreshAccessToken is not defined
+    at file:///C:/Users/brije/desktop/OTT-FS/cinestream-node/routes/userRoutes.js:47:42
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+2025-09-21 20:56:21 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 20:56:21 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 20:56:21 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 20:56:21 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 21:20:00 [ERROR]: ReferenceError: refreshAccessToken is not defined
+    at file:///C:/Users/brije/desktop/OTT-FS/cinestream-node/routes/userRoutes.js:47:42
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+2025-09-21 21:33:46 [ERROR]: TypeError: argument handler must be a function
+    at Function.use (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\router\index.js:392:13)
+    at Function.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\express\lib\application.js:222:21)
+    at Array.forEach (<anonymous>)
+    at Function.use (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\express\lib\application.js:219:7)
+    at file:///C:/Users/brije/desktop/OTT-FS/cinestream-node/app.js:60:5
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+2025-09-21 21:36:13 [ERROR]: ReferenceError: notificationRoutes is not defined
+    at file:///C:/Users/brije/desktop/OTT-FS/cinestream-node/app.js:60:34
+    at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+2025-09-21 22:12:10 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 22:12:10 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 22:12:10 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+    at TCP.<anonymous> (node:net:351:12)
+2025-09-21 22:12:10 [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at Socket.<anonymous> (C:\Users\brije\desktop\OTT-FS\cinestream-node\node_modules\ioredis\built\redis\event_handler.js:182:37)
+    at Object.onceWrapper (node:events:633:26)
+    at Socket.emit (node:events:518:28)
+    at Socket.emit (node:domain:489:12)
+    at TCP.<anonymous> (node:net:351:12)
